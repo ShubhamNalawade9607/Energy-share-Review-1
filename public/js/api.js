@@ -1,6 +1,7 @@
-const API_BASE =  "/api";
+const API_BASE = "/api";
 
-// Demo fallback data for when API fails
+// API helper and fallback demo data
+// Note: These demo data objects are used when the backend is unavailable
 const DEMO_CHARGERS = [
   {
     _id: 'demo-1',
@@ -61,7 +62,7 @@ class API {
         }
 
         try {
-            console.log(`📡 API Request: ${method} ${endpoint}`);
+            console.log(`API Request: ${method} ${endpoint}`);
             
             // Add 10 second timeout
             const controller = new AbortController();
@@ -72,40 +73,40 @@ class API {
             clearTimeout(timeout);
             
             if (response.status === 401) {
-                console.warn('⚠️ Unauthorized - logging out');
+                console.warn('Unauthorized - logging out');
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
                 location.reload();
             }
             
             const json = await response.json();
-            console.log(`✅ API Response: ${endpoint}`, json);
+            console.log(`API Response: ${endpoint}`, json);
             return json;
         } catch (err) {
-            console.error('❌ API Error:', err.message);
+            console.error('API Error:', err.message);
             return { error: err.message, offline: true };
         }
     }
 
     // Auth
     static login(email, password) {
-        console.log('🔓 Attempting login:', email);
+        console.log('Attempting login:', email);
         return this.request('POST', '/auth/login', { email, password });
     }
 
     static register(name, email, password, role) {
-        console.log('📝 Attempting registration:', email, 'as', role);
+        console.log('Attempting registration:', email, 'as', role);
         return this.request('POST', '/auth/register', { name, email, password, role });
     }
 
     // Chargers
     static async getAllChargers() {
-        console.log('🗺️ Loading all chargers');
+        console.log('Loading all chargers');
         const result = await this.request('GET', '/chargers');
         
         // Fallback to demo data if API fails
         if (result.error || result.offline) {
-            console.warn('📊 API failed - using demo chargers');
+            console.warn('API failed - using demo chargers');
             return DEMO_CHARGERS;
         }
         return result;
@@ -116,49 +117,49 @@ class API {
     }
 
     static createCharger(data) {
-        console.log('➕ Creating charger:', data.name);
+        console.log('Creating charger:', data.name);
         return this.request('POST', '/chargers', data);
     }
 
     static updateCharger(id, data) {
-        console.log('✏️ Updating charger:', id);
+        console.log('Updating charger:', id);
         return this.request('PUT', `/chargers/${id}`, data);
     }
 
     static deleteCharger(id) {
-        console.log('🗑️ Deleting charger:', id);
+        console.log('Deleting charger:', id);
         return this.request('DELETE', `/chargers/${id}`);
     }
 
     static getOwnerChargers() {
-        console.log('📋 Loading owner chargers');
+        console.log('Loading owner chargers');
         return this.request('GET', '/chargers/owner/list');
     }
 
     // Bookings
     static createBooking(data) {
-        console.log('📅 Creating booking:', data.durationHours, 'hours');
+        console.log('Creating booking:', data.durationHours, 'hours');
         return this.request('POST', '/bookings', data);
     }
 
     static getUserBookings() {
-        console.log('📖 Loading user bookings');
+        console.log('Loading user bookings');
         return this.request('GET', '/bookings/user/list');
     }
 
     static getChargerBookings(chargerId) {
-        console.log('📊 Loading charger bookings:', chargerId);
+        console.log('Loading charger bookings:', chargerId);
         return this.request('GET', `/bookings/charger/${chargerId}`);
     }
 
     // User impact
     static async getUserImpact() {
-        console.log('🌱 Loading user impact');
+        console.log('Loading user impact');
         const result = await this.request('GET', '/users/impact');
         
         // Fallback impact data
         if (result.error || result.offline) {
-            console.warn('📊 Impact API failed - using default values');
+            console.warn('Impact API failed - using default values');
             return {
                 greenScore: 50,
                 totalSessions: 0,
@@ -170,12 +171,12 @@ class API {
     }
 
     static completeBooking(id) {
-        console.log('✅ Completing booking:', id);
+        console.log('Completing booking:', id);
         return this.request('PUT', `/bookings/${id}/complete`);
     }
 
     static cancelBooking(id) {
-        console.log('❌ Cancelling booking:', id);
+        console.log('Cancelling booking:', id);
         return this.request('PUT', `/bookings/${id}/cancel`);
     }
 
@@ -184,7 +185,7 @@ class API {
     // ===========================
 
     static createBookingRequest(chargerId, startTime, durationHours) {
-        console.log(`📋 Creating booking request for charger: ${chargerId}`);
+        console.log(`Creating booking request for charger: ${chargerId}`);
         return this.request('POST', '/booking-requests', {
             chargerId,
             startTime,
@@ -193,64 +194,64 @@ class API {
     }
 
     static getUserBookingRequests() {
-        console.log('📋 Loading user booking requests');
+        console.log('Loading user booking requests');
         return this.request('GET', '/booking-requests/user/list');
     }
 
     static getOwnerBookingRequests() {
-        console.log('📋 Loading owner booking requests');
+        console.log('Loading owner booking requests');
         return this.request('GET', '/booking-requests/owner/pending');
     }
 
     static getBookingRequestDetail(id) {
-        console.log(`📋 Loading booking request: ${id}`);
+        console.log(`Loading booking request: ${id}`);
         return this.request('GET', `/booking-requests/${id}`);
     }
 
     static cancelBookingRequest(id) {
-        console.log(`🚫 Cancelling booking request: ${id}`);
+        console.log(`Cancelling booking request: ${id}`);
         return this.request('PUT', `/booking-requests/${id}/cancel`);
     }
 
     // Owner actions
     static approveBookingRequest(id) {
-        console.log(`✅ Approving booking request: ${id}`);
+        console.log(`Approving booking request: ${id}`);
         return this.request('PUT', `/booking-requests/${id}/approve`);
     }
 
     static rejectBookingRequest(id, reason) {
-        console.log(`❌ Rejecting booking request: ${id}`);
+        console.log(`Rejecting booking request: ${id}`);
         return this.request('PUT', `/booking-requests/${id}/reject`, { reason });
     }
 
     static startChargingSession(id) {
-        console.log(`⚡ Starting charging session: ${id}`);
+        console.log(`Starting charging session: ${id}`);
         return this.request('PUT', `/booking-requests/${id}/session/start`);
     }
 
     static endChargingSession(id) {
-        console.log(`🏁 Ending charging session: ${id}`);
+        console.log(`Ending charging session: ${id}`);
         return this.request('PUT', `/booking-requests/${id}/session/end`);
     }
 
     static cancelApprovedSession(id, reason) {
-        console.log(`🚫 Cancelling approved session: ${id}`);
+        console.log(`Cancelling approved session: ${id}`);
         return this.request('PUT', `/booking-requests/${id}/session/cancel`, { reason });
     }
 
     // Users
     static getProfile() {
-        console.log('👤 Loading user profile');
+        console.log('Loading user profile');
         return this.request('GET', '/users/profile');
     }
 
     static async getLeaderboard() {
-        console.log('🏆 Loading leaderboard');
+        console.log('Loading leaderboard');
         const result = await this.request('GET', '/users/leaderboard');
         
         // Fallback to demo leaderboard
         if (result.error || result.offline) {
-            console.warn('📊 Leaderboard API failed - using demo data');
+            console.warn('Leaderboard API failed - using demo data');
             return DEMO_LEADERBOARD;
         }
         return result;

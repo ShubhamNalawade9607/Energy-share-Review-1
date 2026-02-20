@@ -1,0 +1,171 @@
+/* modern.css — Clean, commented, and production-oriented styles for index.html
+   - Focus: polished hero, interactive feature cards, accessible animations
+*/
+
+:root {
+  /* Color system */
+  --primary: #2ecc71;
+  --primary-700: #28b463;
+  --muted: #6c757d;
+  --text: #12202a;
+  --bg: #ffffff;
+
+  /* Layout tokens */
+  --container-width: 1200px;
+  --radius-md: 12px;
+  --radius-sm: 8px;
+
+  /* Elevation */
+  --elevation-1: 0 6px 18px rgba(36, 40, 44, 0.06);
+  --elevation-2: 0 18px 40px rgba(36, 40, 44, 0.08);
+
+  /* Motion */
+  --motion-fast: 160ms;
+  --motion-medium: 220ms;
+}
+
+/* Base */
+html, body { height: 100%; }
+body.modern-ui {
+  font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+  background: linear-gradient(180deg, #fbfdfb 0%, #ffffff 100%);
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* -----------------------------
+   Hero / Top section
+   ----------------------------- */
+.modern-hero {
+  background: linear-gradient(90deg, rgba(46,204,113,0.06), rgba(46,204,113,0.02));
+  border-bottom: 1px solid rgba(0,0,0,0.04);
+  padding-top: 4.5rem;
+  padding-bottom: 4.5rem;
+}
+.hero-top { display:flex; align-items:center; gap:1rem; justify-content:center; margin-bottom: 0.5rem; }
+.hero-icon {
+  width: 88px; height: 88px; border-radius: 16px;
+  background: linear-gradient(135deg, var(--primary), var(--primary-700));
+  display:flex; align-items:center; justify-content:center; font-size:2.4rem; color:#fff;
+  box-shadow: var(--elevation-1);
+  animation: float 6s ease-in-out infinite;
+}
+.hero-title { font-weight:700; color: var(--text); letter-spacing: -0.02em; }
+.hero-sub { opacity:0.88; max-width: 720px; margin: 0 auto; }
+
+/* CTA buttons — consistent scale and interactions */
+.btn-cta {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: #fff;
+  font-weight: 600;
+  box-shadow: 0 8px 18px rgba(46,204,113,0.12);
+  transition: transform var(--motion-fast) ease, box-shadow var(--motion-fast) ease;
+}
+.btn-cta:hover { transform: translateY(-4px); box-shadow: var(--elevation-2); }
+.btn-outline-cta {
+  background: transparent;
+  border: 2px solid rgba(46,204,113,0.12);
+  color: var(--primary);
+  font-weight: 600;
+  transition: transform var(--motion-fast) ease, background var(--motion-fast) ease;
+}
+.btn-outline-cta:hover { background: rgba(46,204,113,0.06); transform: translateY(-3px); }
+
+/* Navigation / Brand */
+.brand-icon{display:inline-flex;align-items:center;justify-content:center;width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,var(--primary),var(--primary-700));color:#fff;font-weight:600}
+.brand-text{color:var(--text);font-weight:700}
+
+/* Dual role / role cards */
+.dual-role-section{background-color: #f8f9fa;border-top:1px solid rgba(0,0,0,0.03);border-bottom:1px solid rgba(0,0,0,0.03)}
+.section-title{color:var(--text);font-size:1.8rem}
+.role-card{border-color:rgba(0,0,0,0.04);text-align:center}
+.role-icon{font-size:2.4rem;margin-bottom:1rem}
+.role-title{color:var(--text);font-size:1.15rem}
+.role-list{list-style:none;padding:0;font-size:1rem;line-height:1.8}
+
+/* Role CTA tweaks */
+.role-card .btn-cta{min-width:160px}
+.role-card .btn-outline-cta{min-width:160px}
+
+/* Footer */
+.site-footer{border-color:rgba(0,0,0,0.04)}
+.site-footer .footer-note{font-size:0.95rem}
+
+/* -----------------------------
+   Feature cards grid + cards
+   - professional polish (subtle shadows, glass accents)
+   - hover lift, skew/tilt and focus outlines for accessibility
+   ----------------------------- */
+.feature-card {
+  position: relative;
+  padding: 1.6rem;
+  background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(250,250,250,0.98));
+  border-radius: var(--radius-md);
+  border: 1px solid rgba(23,23,23,0.04);
+  transition: transform var(--motion-medium) cubic-bezier(.2,.9,.3,1), box-shadow var(--motion-medium) ease;
+  will-change: transform;
+  overflow: hidden;
+}
+
+/* Slight 3D tilt + lift on hover */
+.feature-card:hover {
+  transform: translateY(-12px) rotateX(2deg);
+  box-shadow: var(--elevation-2);
+}
+
+/* Decorative accent (subtle gradient blob) */
+.feature-card::before {
+  content: '';
+  position: absolute;
+  right: -40px; top: -30px;
+  width: 140px; height: 140px;
+  background: radial-gradient(circle at 30% 30%, rgba(46,204,113,0.12), transparent 40%);
+  transform: rotate(12deg);
+  pointer-events: none;
+}
+
+.feature-icon {
+  font-size: 2.2rem;
+  margin-bottom: 0.6rem;
+  display:flex; align-items:center; justify-content:center;
+  width: 72px; height: 72px; border-radius: 12px;
+  background: linear-gradient(135deg, rgba(46,204,113,0.12), rgba(46,204,113,0.04));
+  box-shadow: inset 0 -6px 18px rgba(255,255,255,0.6);
+}
+.feature-title { color: var(--text); margin-bottom: 0.35rem; }
+.feature-text { color: var(--muted); margin-bottom: 0; }
+
+/* Staggered entrance for the grid using nth-child */
+.container-lg .row.g-4 > .col-md-6 { opacity: 0; transform: translateY(8px); animation: fadeInUp .6s ease forwards; }
+.container-lg .row.g-4 > .col-md-6:nth-child(1) { animation-delay: 0.06s; }
+.container-lg .row.g-4 > .col-md-6:nth-child(2) { animation-delay: 0.12s; }
+.container-lg .row.g-4 > .col-md-6:nth-child(3) { animation-delay: 0.18s; }
+
+/* Cards used in the dual role area */
+.p-5.bg-white.rounded-3.border { transition: transform var(--motion-medium) ease, box-shadow var(--motion-medium) ease; }
+.p-5.bg-white.rounded-3.border:hover { transform: translateY(-8px); box-shadow: var(--elevation-2); }
+
+/* -----------------------------
+   Tiny utilities and motion definitions
+   ----------------------------- */
+@keyframes float { 0% { transform: translateY(0); } 50% { transform: translateY(-8px); } 100% { transform: translateY(0); } }
+@keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Apply fadeInUp to hero and content blocks */
+.hero-top, .hero-sub, .feature-card, .p-5.bg-white { animation: fadeInUp .7s ease both; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-icon { width: 64px; height: 64px; font-size: 1.6rem; }
+  .hero-title { font-size: 1.6rem; }
+  .feature-card { padding: 1.2rem; }
+}
+
+/* Accessibility: prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .hero-icon { animation: none; }
+  .hero-top, .hero-sub, .feature-card { animation: none; }
+  .feature-card:hover { transform: none; box-shadow: var(--elevation-1); }
+}

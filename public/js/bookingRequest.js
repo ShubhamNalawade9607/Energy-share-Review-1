@@ -8,12 +8,12 @@ const BookingRequest = {
     // PROTOTYPE MODE: Shows alert instead of actual booking
     async sendBookingRequest(chargerId, startTime, durationHours) {
         try {
-            console.log(`📋 Booking request - PROTOTYPE MODE`);
+            console.log('Booking request - PROTOTYPE MODE');
             // PROTOTYPE: Don't send actual API request
-            alert('🚀 Booking module under development – will be demonstrated in next review.\n\nThis is a Phase 1 Architecture Demo. Full booking functionality coming soon.');
+            alert('Booking module under development – will be demonstrated in next review.\n\nThis is a Phase 1 Architecture Demo. Full booking functionality coming soon.');
             return true;
         } catch (err) {
-            console.error('❌ Error:', err);
+            console.error('Error:', err);
             return false;
         }
     },
@@ -21,17 +21,17 @@ const BookingRequest = {
     // Load user's booking requests
     async loadUserBookingRequests() {
         try {
-            console.log('📋 Loading booking requests...');
+            console.log('Loading booking requests...');
             const requests = await API.getUserBookingRequests();
 
             if (requests.error) {
-                console.warn('⚠️ Failed to load booking requests');
+                console.warn('Failed to load booking requests');
                 return [];
             }
 
             return requests;
         } catch (err) {
-            console.error('❌ Error loading booking requests:', err);
+            console.error('Error loading booking requests:', err);
             return [];
         }
     },
@@ -43,19 +43,19 @@ const BookingRequest = {
                 return false;
             }
 
-            console.log(`🚫 Cancelling request: ${requestId}`);
+            console.log(`Cancelling request: ${requestId}`);
             const result = await API.cancelBookingRequest(requestId);
 
             if (result.error) {
-                alert(`❌ Error: ${result.error}`);
+                alert(`Error: ${result.error}`);
                 return false;
             }
 
-            alert('✅ Booking request cancelled.');
+            alert('Booking request cancelled.');
             return true;
         } catch (err) {
-            console.error('❌ Error cancelling request:', err);
-            alert('❌ Failed to cancel request.');
+            console.error('Error cancelling request:', err);
+            alert('Failed to cancel request.');
             return false;
         }
     },
@@ -63,12 +63,12 @@ const BookingRequest = {
     // Format request status as badge
     getStatusBadge(status) {
         const statuses = {
-            'pending': '<span class="badge bg-warning text-dark">⏳ Pending</span>',
-            'approved': '<span class="badge bg-info">✅ Approved</span>',
-            'rejected': '<span class="badge bg-danger">❌ Rejected</span>',
-            'session_active': '<span class="badge bg-success">⚡ Session Active</span>',
-            'session_ended': '<span class="badge bg-secondary">🏁 Session Ended</span>',
-            'session_cancelled': '<span class="badge bg-secondary">🚫 Cancelled</span>'
+            'pending': '<span class="badge bg-warning text-dark">Pending</span>',
+            'approved': '<span class="badge bg-info">Approved</span>',
+            'rejected': '<span class="badge bg-danger">Rejected</span>',
+            'session_active': '<span class="badge bg-success">Session Active</span>',
+            'session_ended': '<span class="badge bg-secondary">Session Ended</span>',
+            'session_cancelled': '<span class="badge bg-secondary">Cancelled</span>'
         };
         return statuses[status] || `<span class="badge bg-secondary">${status}</span>`;
     },
@@ -95,9 +95,9 @@ const BookingRequest = {
             if (req.status === 'pending' || req.status === 'rejected') {
                 actionBtn = `<button class="btn btn-sm btn-danger" onclick="BookingRequest.cancelRequest('${req._id}'); location.reload();">Cancel</button>`;
             } else if (req.status === 'approved') {
-                actionBtn = `<button class="btn btn-sm btn-warning" onclick="BookingRequest.startSession('${req._id}'); location.reload();">⚡ Start Session</button>`;
+                actionBtn = `<button class="btn btn-sm btn-warning" onclick="BookingRequest.startSession('${req._id}'); location.reload();">Start Session</button>`;
             } else if (req.status === 'session_active') {
-                actionBtn = `<button class="btn btn-sm btn-success" onclick="BookingRequest.endSession('${req._id}'); location.reload();">🏁 End Session</button>`;
+                actionBtn = `<button class="btn btn-sm btn-success" onclick="BookingRequest.endSession('${req._id}'); location.reload();">End Session</button>`;
             }
             html += `
                 <div class="list-group-item">
@@ -105,9 +105,9 @@ const BookingRequest = {
                         <div class="flex-grow-1">
                             <h6 class="mb-1"><strong>${charger.name}</strong></h6>
                             <small class="text-muted">
-                                📍 ${charger.address}<br>
-                                🕐 ${startDate}<br>
-                                ⏱️ Duration: ${duration} minutes
+                                ${charger.address}<br>
+                                ${startDate}<br>
+                                Duration: ${duration} minutes
                             </small>
                         </div>
                         <div class="text-end">
@@ -131,17 +131,17 @@ const OwnerBookingManagement = {
     // Load pending requests for owner
     async loadPendingRequests() {
         try {
-            console.log('📋 Loading pending requests...');
+            console.log('Loading pending requests...');
             const requests = await API.getOwnerBookingRequests();
 
             if (requests.error) {
-                console.warn('⚠️ Failed to load requests');
+                console.warn('Failed to load requests');
                 return [];
             }
 
             return requests;
         } catch (err) {
-            console.error('❌ Error loading requests:', err);
+            console.error('Error loading requests:', err);
             return [];
         }
     },
@@ -152,19 +152,18 @@ const OwnerBookingManagement = {
             const confirmed = confirm('Approve this booking request? The session will be ready to start.');
             if (!confirmed) return false;
 
-            console.log(`✅ Approving request: ${requestId}`);
+            console.log(`Approving request: ${requestId}`);
             const result = await API.approveBookingRequest(requestId);
 
             if (result.error) {
-                alert(`❌ Error: ${result.error}`);
+                alert(`Error: ${result.error}`);
                 return false;
             }
-
-            alert('✅ Booking request approved! The user is notified.');
+            alert('Booking request approved. The user is notified.');
             return true;
         } catch (err) {
-            console.error('❌ Error approving request:', err);
-            alert('❌ Failed to approve request.');
+            console.error('Error approving request:', err);
+            alert('Failed to approve request.');
             return false;
         }
     },
@@ -175,19 +174,18 @@ const OwnerBookingManagement = {
             const reason = prompt('Enter reason for rejection (optional):');
             if (reason === null) return false; // User cancelled
 
-            console.log(`❌ Rejecting request: ${requestId}`);
+            console.log(`Rejecting request: ${requestId}`);
             const result = await API.rejectBookingRequest(requestId, reason);
 
             if (result.error) {
-                alert(`❌ Error: ${result.error}`);
+                alert(`Error: ${result.error}`);
                 return false;
             }
-
-            alert('✅ Booking request rejected. The user is notified.');
+            alert('Booking request rejected. The user is notified.');
             return true;
         } catch (err) {
-            console.error('❌ Error rejecting request:', err);
-            alert('❌ Failed to reject request.');
+            console.error('Error rejecting request:', err);
+            alert('Failed to reject request.');
             return false;
         }
     },
@@ -198,19 +196,18 @@ const OwnerBookingManagement = {
             const confirmed = confirm('Start charging session for this user?');
             if (!confirmed) return false;
 
-            console.log(`⚡ Starting session: ${requestId}`);
+            console.log(`Starting session: ${requestId}`);
             const result = await API.startChargingSession(requestId);
 
             if (result.error) {
-                alert(`❌ Error: ${result.error}`);
+                alert(`Error: ${result.error}`);
                 return false;
             }
-
-            alert('✅ Charging session started!');
+            alert('Charging session started.');
             return true;
         } catch (err) {
-            console.error('❌ Error starting session:', err);
-            alert('❌ Failed to start session.');
+            console.error('Error starting session:', err);
+            alert('Failed to start session.');
             return false;
         }
     },
@@ -221,19 +218,18 @@ const OwnerBookingManagement = {
             const confirmed = confirm('End charging session for this user?');
             if (!confirmed) return false;
 
-            console.log(`🏁 Ending session: ${requestId}`);
+            console.log(`Ending session: ${requestId}`);
             const result = await API.endChargingSession(requestId);
 
             if (result.error) {
-                alert(`❌ Error: ${result.error}`);
+                alert(`Error: ${result.error}`);
                 return false;
             }
-
-            alert('✅ Charging session ended. Slot now available.');
+            alert('Charging session ended. Slot now available.');
             return true;
         } catch (err) {
-            console.error('❌ Error ending session:', err);
-            alert('❌ Failed to end session.');
+            console.error('Error ending session:', err);
+            alert('Failed to end session.');
             return false;
         }
     },
@@ -244,19 +240,18 @@ const OwnerBookingManagement = {
             const reason = prompt('Enter reason for cancellation (optional):');
             if (reason === null) return false;
 
-            console.log(`🚫 Cancelling session: ${requestId}`);
+            console.log(`Cancelling session: ${requestId}`);
             const result = await API.cancelApprovedSession(requestId, reason);
 
             if (result.error) {
-                alert(`❌ Error: ${result.error}`);
+                alert(`Error: ${result.error}`);
                 return false;
             }
-
-            alert('✅ Session cancelled. User is notified and slot is freed.');
+            alert('Session cancelled. User is notified and slot is freed.');
             return true;
         } catch (err) {
-            console.error('❌ Error cancelling session:', err);
-            alert('❌ Failed to cancel session.');
+            console.error('Error cancelling session:', err);
+            alert('Failed to cancel session.');
             return false;
         }
     },
@@ -264,12 +259,12 @@ const OwnerBookingManagement = {
     // Format status badge
     getStatusBadge(status) {
         const statuses = {
-            'pending': '<span class="badge bg-warning text-dark">⏳ Pending</span>',
-            'approved': '<span class="badge bg-info">✅ Approved</span>',
-            'rejected': '<span class="badge bg-danger">❌ Rejected</span>',
-            'session_active': '<span class="badge bg-success">⚡ Session Active</span>',
-            'session_ended': '<span class="badge bg-secondary">🏁 Session Ended</span>',
-            'session_cancelled': '<span class="badge bg-secondary">🚫 Cancelled</span>'
+            'pending': '<span class="badge bg-warning text-dark">Pending</span>',
+            'approved': '<span class="badge bg-info">Approved</span>',
+            'rejected': '<span class="badge bg-danger">Rejected</span>',
+            'session_active': '<span class="badge bg-success">Session Active</span>',
+            'session_ended': '<span class="badge bg-secondary">Session Ended</span>',
+            'session_cancelled': '<span class="badge bg-secondary">Cancelled</span>'
         };
         return statuses[status] || `<span class="badge bg-secondary">${status}</span>`;
     },
@@ -286,17 +281,17 @@ const OwnerBookingManagement = {
         switch (request.status) {
             case 'pending':
                 return `
-                    <button class="btn btn-sm btn-success" onclick="OwnerBookingManagement.approveRequest('${request._id}'); location.reload();">✅ Approve</button>
-                    <button class="btn btn-sm btn-danger" onclick="OwnerBookingManagement.rejectRequest('${request._id}'); location.reload();">❌ Reject</button>
+                    <button class="btn btn-sm btn-success" onclick="OwnerBookingManagement.approveRequest('${request._id}'); location.reload();">Approve</button>
+                    <button class="btn btn-sm btn-danger" onclick="OwnerBookingManagement.rejectRequest('${request._id}'); location.reload();">Reject</button>
                 `;
             case 'approved':
                 return `
-                    <button class="btn btn-sm btn-warning" onclick="OwnerBookingManagement.startSession('${request._id}'); location.reload();">⚡ Start Session</button>
-                    <button class="btn btn-sm btn-danger" onclick="OwnerBookingManagement.cancelSession('${request._id}'); location.reload();">🚫 Cancel</button>
+                    <button class="btn btn-sm btn-warning" onclick="OwnerBookingManagement.startSession('${request._id}'); location.reload();">Start Session</button>
+                    <button class="btn btn-sm btn-danger" onclick="OwnerBookingManagement.cancelSession('${request._id}'); location.reload();">Cancel</button>
                 `;
             case 'session_active':
                 return `
-                    <button class="btn btn-sm btn-danger" onclick="OwnerBookingManagement.endSession('${request._id}'); location.reload();">🏁 End Session</button>
+                    <button class="btn btn-sm btn-danger" onclick="OwnerBookingManagement.endSession('${request._id}'); location.reload();">End Session</button>
                 `;
             default:
                 return '<span class="text-muted">No actions available</span>';
@@ -327,8 +322,8 @@ const OwnerBookingManagement = {
                         <div>
                             <h6 class="mb-1"><strong>${user.name}</strong> - ${charger.name}</h6>
                             <small class="text-muted">
-                                📍 ${charger.location}<br>
-                                👤 Score: ${user.greenScore} | 📧 ${user.email}
+                                ${charger.location}<br>
+                                Score: ${user.greenScore} | ${user.email}
                             </small>
                         </div>
                         <div>${statusBadge}</div>
@@ -336,10 +331,10 @@ const OwnerBookingManagement = {
                     
                     <div class="mb-2 small">
                         <strong>Booking Details:</strong><br>
-                        🕐 Requested for: ${startDate}<br>
-                        ⏱️ Duration: ${duration} minutes
-                        ${sessionStart !== '-' ? `<br>⚡ Session started: ${sessionStart}` : ''}
-                        ${sessionEnd !== '-' ? `<br>🏁 Session ended: ${sessionEnd}` : ''}
+                        Requested for: ${startDate}<br>
+                        Duration: ${duration} minutes
+                        ${sessionStart !== '-' ? `<br>Session started: ${sessionStart}` : ''}
+                        ${sessionEnd !== '-' ? `<br>Session ended: ${sessionEnd}` : ''}
                     </div>
                     
                     <div class="d-flex gap-2">

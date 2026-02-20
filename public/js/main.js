@@ -12,52 +12,52 @@
 let bookingsModal;
 
 document.addEventListener('DOMContentLoaded', async () => {
-    console.log('📊 === USER DASHBOARD STARTING ===');
-    console.log('⏰ Timestamp:', new Date().toISOString());
-    console.log('📄 URL:', window.location.href);
-    console.log('📚 Leaflet available:', typeof L !== 'undefined');
+    console.log('USER DASHBOARD STARTING');
+    console.log('Timestamp:', new Date().toISOString());
+    console.log('URL:', window.location.href);
+    console.log('Leaflet available:', typeof L !== 'undefined');
     
     // Wait a bit for DOM to fully render before initializing map
     await new Promise(resolve => setTimeout(resolve, 100));
     
     // Initialize map and public data even for guests
     try {
-        console.log('📍 Step 1: Initializing map...');
+        console.log('Step 1: Initializing map...');
         console.log('   - Checking if map container exists...');
         const mapContainer = document.getElementById('map');
         if (!mapContainer) {
             throw new Error('Map container#map not found in DOM!');
         }
         console.log(`   - Map container found: ${mapContainer.offsetWidth}x${mapContainer.offsetHeight}px`);
-        
+
         const mapReady = initMap();
         if (!mapReady) {
-            console.warn('⚠️ Map initialization returned false but continuing...');
+            console.warn('Map initialization returned false but continuing...');
         }
-        console.log('✅ Step 1 complete');
+        console.log('Step 1 complete');
 
         // Wait another moment for map to start rendering before loading chargers
         await new Promise(resolve => setTimeout(resolve, 200));
 
         // Load public data
-        console.log('📍 Step 2: Loading public charger data...');
+        console.log('Step 2: Loading public charger data...');
         await loadChargers();          // Load and render chargers on map
-        console.log('✅ Step 2 complete');
+        console.log('Step 2 complete');
         
-        console.log('📍 Step 3: Loading leaderboard...');
+        console.log('Step 3: Loading leaderboard...');
         await loadLeaderboard();       // Load top users
-        console.log('✅ Step 3 complete');
+        console.log('Step 3 complete');
         
         // Always load and display green impact for prototype demo
-        console.log('📍 Step 4: Loading green impact data...');
+        console.log('Step 4: Loading green impact data...');
         await loadImpact();            // Load green impact stats (demo data for prototype)
-        console.log('✅ Step 4 complete');
+        console.log('Step 4 complete');
 
         // If user is authenticated, load additional private data and set up user UI
         if (Auth.isAuthenticated()) {
-            console.log('📍 Step 5: User is authenticated - loading user-specific data...');
+            console.log('Step 5: User is authenticated - loading user-specific data...');
             const user = Auth.getCurrentUser();
-            console.log(`👤 Welcome ${user.name}`);
+            console.log(`Welcome ${user.name}`);
 
             // Update UI with user info
             const userNameEl = document.getElementById('userName');
@@ -67,10 +67,10 @@ document.addEventListener('DOMContentLoaded', async () => {
             await updateUserProfile();     // Get user profile data
             await loadRecentSessions();    // Load user's recent sessions
             await loadAcceptedRequests();  // Load accepted booking requests
-            console.log('✅ Step 5 complete');
+            console.log('Step 5 complete');
 
             // Setup event listeners for authenticated users
-            console.log('📍 Step 6: Setting up event listeners...');
+            console.log('Step 6: Setting up event listeners...');
             bookingsModal = new bootstrap.Modal(document.getElementById('bookingsModal'));
             const viewBookingsBtn = document.getElementById('viewBookings');
             if (viewBookingsBtn) {
@@ -79,10 +79,10 @@ document.addEventListener('DOMContentLoaded', async () => {
                     showMyBookings();
                 });
             }
-            console.log('✅ Step 6 complete');
+            console.log('Step 6 complete');
         } else {
             // For guest/demo users, show generic welcome
-            console.log('👤 Guest/Demo mode - no authentication required for prototype');
+            console.log('Guest/Demo mode - no authentication required for prototype');
             const userNameEl = document.getElementById('userName');
             if (userNameEl) userNameEl.textContent = 'Demo User';
         }
@@ -100,7 +100,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Refresh public data every 30 seconds
         setInterval(() => {
-            console.log('🔄 Periodic refresh: Reloading chargers and impact data...');
+            console.log('Periodic refresh: Reloading chargers and impact data...');
             loadChargers();
             loadImpact();
             if (Auth.isAuthenticated()) {
@@ -108,18 +108,16 @@ document.addEventListener('DOMContentLoaded', async () => {
             }
         }, 30000);
 
-        console.log('✅ ===========================================');
-        console.log('✅ DASHBOARD INITIALIZATION COMPLETE!');
-        console.log('✅ Map should be visible above.');
-        console.log('✅ ===========================================');
+        console.log('DASHBOARD INITIALIZATION COMPLETE');
+        console.log('Map should be visible above.');
         
         // Mark dashboard as loaded
         window.dashboardLoaded = true;
     } catch (err) {
-        console.error('❌ CRITICAL: Dashboard initialization error:', err);
+        console.error('CRITICAL: Dashboard initialization error:', err);
         console.error('Error stack:', err.stack);
         // Show error in an alert for visibility
-        alert(`❌ Dashboard Error: ${err.message}\n\nCheck browser console for details.`);
+        alert(`Dashboard Error: ${err.message}\n\nCheck browser console for details.`);
     }
 });
 
@@ -127,16 +125,16 @@ document.addEventListener('DOMContentLoaded', async () => {
 // PROTOTYPE MODE: Shows static placeholder data
 async function updateUserProfile() {
     try {
-        console.log('👤 Updating profile (PROTOTYPE MODE - static data)...');
+        console.log('Updating profile (PROTOTYPE MODE - static data)...');
         // PROTOTYPE: Use static data instead of API call
         const profile = { greenScore: 75 };
         
-        if (profile && profile.greenScore !== undefined) {
-            document.getElementById('userScore').textContent = `🌱 Score: ${profile.greenScore}`;
-            console.log(`✅ Green score (STATIC): ${profile.greenScore}`);
+            if (profile && profile.greenScore !== undefined) {
+            document.getElementById('userScore').textContent = `Score: ${profile.greenScore}`;
+            console.log(`Green score (STATIC): ${profile.greenScore}`);
         }
     } catch (err) {
-        console.warn('⚠️ Profile update failed (non-critical):', err);
+        console.warn('Profile update failed (non-critical):', err);
         // Continue - not critical for demo
     }
 }
@@ -145,7 +143,7 @@ async function updateUserProfile() {
 // PROTOTYPE MODE: Shows static placeholder data
 async function loadImpact() {
     try {
-        console.log('🌱 Loading user impact (PROTOTYPE MODE - static data)...');
+        console.log('Loading user impact (PROTOTYPE MODE - static data)...');
         
         // Check if required DOM elements exist
         const scoreEl = document.getElementById('greenScoreValue');
@@ -155,7 +153,7 @@ async function loadImpact() {
         const co2El = document.getElementById('co2Saved');
         
         if (!scoreEl || !progressEl || !percentEl) {
-            console.warn('⚠️ Impact elements missing from DOM, skipping update');
+            console.warn('Impact elements missing from DOM, skipping update');
             return;
         }
 
@@ -169,7 +167,7 @@ async function loadImpact() {
         const score = Math.max(0, Math.min(100, impact.greenScore || 0));
         const percent = Math.round((score / 100) * 100);
 
-        scoreEl.textContent = `🌱 ${score}`;
+        scoreEl.textContent = `${score}`;
         progressEl.style.width = `${percent}%`;
         progressEl.setAttribute('aria-valuenow', percent);
         percentEl.textContent = `${percent}%`;
@@ -177,13 +175,13 @@ async function loadImpact() {
         if (sessionsEl) sessionsEl.textContent = impact.totalSessions || 0;
         if (co2El) co2El.textContent = `${(impact.estimatedCO2Saved || 0).toFixed(1)} kg`;
 
-        console.log(`✅ Impact loaded (STATIC): Score=${score}, Sessions=${impact.totalSessions}, CO2=${(impact.estimatedCO2Saved || 0).toFixed(1)}kg`);
+        console.log(`Impact loaded (STATIC): Score=${score}, Sessions=${impact.totalSessions}, CO2=${(impact.estimatedCO2Saved || 0).toFixed(1)}kg`);
 
         // Also update navbar quick score
         const profileScore = document.getElementById('userScore');
-        if (profileScore) profileScore.textContent = `🌱 Score: ${score}`;
+        if (profileScore) profileScore.textContent = `Score: ${score}`;
     } catch (err) {
-        console.error('❌ Impact load error:', err);
+        console.error('Impact load error:', err);
         // Show default values - demo-safe fallback
         try {
             const scoreEl = document.getElementById('greenScoreValue');
@@ -192,13 +190,13 @@ async function loadImpact() {
             const sessionsEl = document.getElementById('totalSessions');
             const co2El = document.getElementById('co2Saved');
             
-            if (scoreEl) scoreEl.textContent = '🌱 75';
+            if (scoreEl) scoreEl.textContent = '75';
             if (progressEl) progressEl.style.width = '75%';
             if (percentEl) percentEl.textContent = '75%';
             if (sessionsEl) sessionsEl.textContent = '12';
             if (co2El) co2El.textContent = '45.6 kg';
         } catch (fallbackErr) {
-            console.warn('⚠️ Could not set fallback values:', fallbackErr);
+            console.warn('Could not set fallback values:', fallbackErr);
         }
     }
 }
@@ -206,7 +204,7 @@ async function loadImpact() {
 // Load and render recent sessions (user bookings)
 async function loadRecentSessions() {
     try {
-        console.log('📚 Loading recent sessions...');
+        console.log('Loading recent sessions...');
         const bookings = await API.getUserBookings();
         const container = document.getElementById('recentSessions');
         if (!container) return;
@@ -239,7 +237,7 @@ async function loadRecentSessions() {
         html += '</div>';
         container.innerHTML = html;
     } catch (err) {
-        console.error('❌ Failed to load recent sessions:', err);
+        console.error('Failed to load recent sessions:', err);
         const container = document.getElementById('recentSessions');
         if (container) container.innerHTML = '<p class="text-danger">Error loading sessions</p>';
     }
@@ -248,7 +246,7 @@ async function loadRecentSessions() {
 // Load accepted booking requests (requests approved by owner)
 async function loadAcceptedRequests() {
     try {
-        console.log('📨 Loading booking requests...');
+        console.log('Loading booking requests...');
         const requests = await BookingRequest.loadUserBookingRequests();
         const container = document.getElementById('acceptedRequests');
         if (!container) return;
@@ -283,7 +281,7 @@ async function loadAcceptedRequests() {
         html += '</div>';
         container.innerHTML = html;
     } catch (err) {
-        console.error('❌ Failed to load accepted requests:', err);
+        console.error('Failed to load accepted requests:', err);
         const container = document.getElementById('acceptedRequests');
         if (container) container.innerHTML = '<p class="text-danger">Error loading accepted requests</p>';
     }
@@ -291,7 +289,7 @@ async function loadAcceptedRequests() {
 
 async function showMyBookings() {
     try {
-        console.log('📋 Loading bookings and requests...');
+        console.log('Loading bookings and requests...');
         // Load both active bookings and pending requests
         const bookings = await API.getUserBookings();
         const requests = await BookingRequest.loadUserBookingRequests();
@@ -326,8 +324,8 @@ async function showMyBookings() {
                                 <div>Duration: ${booking.durationHours || 0}h | Green Points: ${booking.greenPointsEarned || 0}</div>
                             </div>
                             ${booking.status === 'active' ? `
-                                <button class="btn btn-sm btn-success mt-2" onclick="completeBooking('${booking._id}')">✅ Complete</button>
-                                <button class="btn btn-sm btn-danger mt-2" onclick="cancelBooking('${booking._id}')">❌ Cancel</button>
+                                <button class="btn btn-sm btn-success mt-2" onclick="completeBooking('${booking._id}')">Complete</button>
+                                <button class="btn btn-sm btn-danger mt-2" onclick="cancelBooking('${booking._id}')">Cancel</button>
                             ` : ''}
                         </div>
                     </div>
@@ -347,7 +345,7 @@ async function showMyBookings() {
 
         if (bookingsModal) bookingsModal.show();
     } catch (err) {
-        console.error('❌ Error loading bookings:', err);
+        console.error('Error loading bookings:', err);
         document.getElementById('bookings-content').innerHTML = '<p class="text-danger">Error loading bookings</p>';
         document.getElementById('requests-content').innerHTML = '<p class="text-danger">Error loading requests</p>';
         if (bookingsModal) bookingsModal.show();
@@ -358,11 +356,11 @@ async function completeBooking(bookingId) {
     if (!confirm('Mark this booking as complete?')) return;
 
     try {
-        console.log(`✅ Completing booking: ${bookingId}`);
+        console.log(`Completing booking: ${bookingId}`);
         const result = await API.completeBooking(bookingId);
         if (!result.error) {
-            console.log('✅ Booking completed successfully');
-            alert('✅ Booking completed! Green points earned.');
+            console.log('Booking completed successfully');
+            alert('Booking completed. Green points earned.');
             updateUserProfile();
             showMyBookings();
             loadChargers();
@@ -370,8 +368,8 @@ async function completeBooking(bookingId) {
             throw new Error(result.error || 'Unknown error');
         }
     } catch (err) {
-        console.error('❌ Failed to complete booking:', err);
-        alert('❌ Failed to complete booking: ' + (err.message || 'Please try again'));
+        console.error('Failed to complete booking:', err);
+        alert('Failed to complete booking: ' + (err.message || 'Please try again'));
     }
 }
 
@@ -379,11 +377,11 @@ async function cancelBooking(bookingId) {
     if (!confirm('Cancel this booking? Slot will be freed up.')) return;
     
     try {
-        console.log(`❌ Cancelling booking: ${bookingId}`);
+        console.log(`Cancelling booking: ${bookingId}`);
         const result = await API.cancelBooking(bookingId);
         if (!result.error) {
-            console.log('✅ Booking cancelled successfully');
-            alert('✅ Booking cancelled. Slot is now available for others.');
+            console.log('Booking cancelled successfully');
+            alert('Booking cancelled. Slot is now available for others.');
             updateUserProfile();
             showMyBookings();
             loadChargers();
@@ -391,7 +389,7 @@ async function cancelBooking(bookingId) {
             throw new Error(result.error || 'Unknown error');
         }
     } catch (err) {
-        console.error('❌ Failed to cancel booking:', err);
-        alert('❌ Failed to cancel booking: ' + (err.message || 'Please try again'));
+        console.error('Failed to cancel booking:', err);
+        alert('Failed to cancel booking: ' + (err.message || 'Please try again'));
     }
 }

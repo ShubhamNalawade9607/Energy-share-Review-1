@@ -71,7 +71,7 @@
 <body>
     <div class="container">
         <div class="header">
-            <h1>⚡ Energy-Share Map Test</h1>
+            <h1>Energy-Share Map Test</h1>
             <p>Testing Leaflet.js and map rendering capabilities</p>
         </div>
         
@@ -107,35 +107,35 @@
         
         // Test 1: Check Leaflet
         if (typeof L !== 'undefined') {
-            libraryDiv.innerHTML += '✅ Leaflet is loaded<br>';
+            libraryDiv.innerHTML += 'Leaflet is loaded<br>';
             addResult('Leaflet Library', true, 'Leaflet L object is available');
         } else {
-            libraryDiv.innerHTML += '❌ Leaflet NOT loaded<br>';
+            libraryDiv.innerHTML += 'Leaflet NOT loaded<br>';
             addResult('Leaflet Library', false, 'Leaflet failed to load from CDN');
         }
         
         // Test 2: Check L.map function
         if (typeof L !== 'undefined' && typeof L.map === 'function') {
-            libraryDiv.innerHTML += '✅ L.map() function exists<br>';
+            libraryDiv.innerHTML += 'L.map() function exists<br>';
             addResult('L.map() Function', true, 'L.map function is available');
         } else {
-            libraryDiv.innerHTML += '❌ L.map() missing<br>';
+            libraryDiv.innerHTML += 'L.map() missing<br>';
             addResult('L.map() Function', false, 'L.map function not found');
         }
         
         // Test 3: Check L.tileLayer function
         if (typeof L !== 'undefined' && typeof L.tileLayer === 'function') {
-            libraryDiv.innerHTML += '✅ L.tileLayer() function exists<br>';
+            libraryDiv.innerHTML += 'L.tileLayer() function exists<br>';
             addResult('L.tileLayer() Function', true, 'L.tileLayer function is available');
         } else {
-            libraryDiv.innerHTML += '❌ L.tileLayer() missing<br>';
+            libraryDiv.innerHTML += 'L.tileLayer() missing<br>';
             addResult('L.tileLayer() Function', false, 'L.tileLayer function not found');
         }
         
         // Test 4: Try to create a map
         try {
             const testMap = L.map('mapTest').setView([51.505, -0.09], 13);
-            libraryDiv.innerHTML += '✅ Map created successfully<br>';
+            libraryDiv.innerHTML += 'Map created successfully<br>';
             addResult('Map Creation', true, 'Successfully created Leaflet map instance');
             
             // Test 5: Add tile layer
@@ -144,10 +144,10 @@
                     attribution: '© OpenStreetMap contributors',
                     maxZoom: 19
                 }).addTo(testMap);
-                libraryDiv.innerHTML += '✅ Tile layer added<br>';
+                libraryDiv.innerHTML += 'Tile layer added<br>';
                 addResult('Tile Layer', true, 'OpenStreetMap tiles loaded successfully');
             } catch (e) {
-                libraryDiv.innerHTML += '❌ Tile layer error<br>';
+                libraryDiv.innerHTML += 'Tile layer error<br>';
                 addResult('Tile Layer', false, e.message);
             }
             
@@ -156,10 +156,10 @@
                 L.marker([51.505, -0.09]).addTo(testMap)
                     .bindPopup('Test Marker<br>London Center')
                     .openPopup();
-                libraryDiv.innerHTML += '✅ Marker added<br>';
+                libraryDiv.innerHTML += 'Marker added<br>';
                 addResult('Marker', true, 'Successfully added test marker');
             } catch (e) {
-                libraryDiv.innerHTML += '❌ Marker error<br>';
+                libraryDiv.innerHTML += 'Marker error<br>';
                 addResult('Marker', false, e.message);
             }
             
@@ -168,17 +168,17 @@
                 testMap.invalidateSize();
             }, 100);
         } catch (e) {
-            libraryDiv.innerHTML += '❌ Map creation error<br>';
+            libraryDiv.innerHTML += 'Map creation error<br>';
             addResult('Map Creation', false, e.message);
         }
         
         // Test DOM
         const mapEl = document.getElementById('mapTest');
         if (mapEl) {
-            libraryDiv.innerHTML += '✅ Map DOM element found<br>';
+            libraryDiv.innerHTML += 'Map DOM element found<br>';
             addResult('Map Container', true, `Found #mapTest element (${mapEl.offsetWidth}x${mapEl.offsetHeight}px)`);
         } else {
-            libraryDiv.innerHTML += '❌ Map DOM missing<br>';
+            libraryDiv.innerHTML += 'Map DOM missing<br>';
             addResult('Map Container', false, '#mapTest element not found in DOM');
         }
     </script>

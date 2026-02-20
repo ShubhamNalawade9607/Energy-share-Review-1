@@ -14,11 +14,11 @@ let chargerModal;
 // Returns: 'available' (green), 'limited' (yellow), or 'busy' (red)
 function getChargerStatus(charger) {
     if (charger.availableSlots === 0) {
-        return 'busy';           // 🔴 No slots
+        return 'busy'; // No slots available
     } else if (charger.availableSlots < Math.ceil(charger.totalSlots * 0.3)) {
-        return 'limited';        // 🟡 Less than 30% slots
+        return 'limited'; // Less than ~30% slots
     } else {
-        return 'available';      // 🟢 Good availability
+        return 'available'; // Good availability
     }
 }
 
@@ -60,23 +60,23 @@ function createMarkerIcon(status) {
 // Initialize map
 // Sets up Leaflet map centered on London with OpenStreetMap tiles
 function initMap() {
-    console.log('🗺️ initMap() called');
+    console.log('initMap() called');
     
     const mapContainer = document.getElementById('map');
     if (!mapContainer) {
-        console.error('❌ Map container not found');
+        console.error('Map container not found');
         return false;
     }
     
     // Check if map already exists (from inline initialization)
     if (window.testMap && window.testMap._container) {
-        console.log('✅ Reusing existing inline map');
+        console.log('Reusing existing inline map');
         map = window.testMap;
         return true;
     }
     
     try {
-        console.log(`📐 Creating new map (container: ${mapContainer.offsetWidth}x${mapContainer.offsetHeight}px)`);
+        console.log(`Creating new map (container: ${mapContainer.offsetWidth}x${mapContainer.offsetHeight}px)`);
         
         // Check if Leaflet is loaded
         if (typeof L === 'undefined') {
@@ -90,7 +90,7 @@ function initMap() {
             touchZoom: true,
             zoomControl: true
         }).setView([51.505, -0.09], 13);
-        console.log('✅ Map instance created');
+        console.log('Map instance created');
         
         // Add OpenStreetMap tiles
         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -98,7 +98,7 @@ function initMap() {
             maxZoom: 19,
             crossOrigin: true
         }).addTo(map);
-        console.log('✅ Tile layer added');
+        console.log('Tile layer added');
 
         // Add zoom control
         L.control.zoom({ position: 'bottomright' }).addTo(map);
@@ -114,7 +114,7 @@ function initMap() {
             setTimeout(() => {
                 if (map && map.invalidateSize) {
                     map.invalidateSize(false);
-                    console.log(`🔄 Size invalidation ${i + 1}`);
+                    console.log(`Size invalidation ${i + 1}`);
                 }
             }, 100 + (i * 100));
         }
@@ -126,10 +126,10 @@ function initMap() {
             }
         });
 
-        console.log('✅ Map initialized successfully!');
+        console.log('Map initialized successfully');
         return true;
     } catch (err) {
-        console.error('❌ Failed to initialize map:', err.message);
+        console.error('Failed to initialize map:', err.message);
         
         // Show error in map container
         mapContainer.style.display = 'flex';
@@ -137,7 +137,7 @@ function initMap() {
         mapContainer.style.justifyContent = 'center';
         mapContainer.innerHTML = `
             <div style="text-align: center; color: #666; padding: 20px; background: white; border-radius: 4px;">
-                <div style="font-size: 2rem; margin-bottom: 10px;">⚠️</div>
+                <div style="font-size: 2rem; margin-bottom: 10px;">!</div>
                 <div><strong>Map Error</strong></div>
                 <div style="font-size: 0.9rem; margin-top: 10px; color: #999;">
                     ${err.message}
@@ -152,29 +152,29 @@ function initMap() {
 // Load chargers from API
 // Falls back to demo data if API fails
 async function loadChargers() {
-    console.log('📍 === LOADING CHARGERS ===');
-    
+    console.log('=== LOADING CHARGERS ===');
+
     try {
         console.log('   - Calling API.getAllChargers()...');
         const data = await API.getAllChargers();
         console.log('   - API Response received:', data);
         
         if (!data) {
-            console.error('   ❌ API returned null/undefined');
+            console.error('   API returned null/undefined');
             chargers = [];
         } else if (!Array.isArray(data)) {
-            console.warn('   ⚠️ API response is not an array:', typeof data);
+            console.warn('   API response is not an array:', typeof data);
             // Try to use it as a fallback or use empty array
             if (data.error || data.offline) {
-                console.warn('   📊 API error detected - should have returned demo data from API client');
+                    console.warn('   API error detected - should have returned demo data from API client');
                 chargers = [];
             } else {
-                console.warn('   ⚠️ Unexpected response format');
+                console.warn('   Unexpected response format');
                 chargers = [];
             }
         } else {
             chargers = data;
-            console.log(`   ✅ Loaded ${chargers.length} chargers`);
+            console.log(`   Loaded ${chargers.length} chargers`);
             chargers.forEach(c => console.log(`      - ${c.name} @ ${c.latitude}, ${c.longitude}`));
         }
         
@@ -184,9 +184,9 @@ async function loadChargers() {
         console.log('   - Calling renderChargersList()...');
         renderChargersList();
         
-        console.log('✅ === CHARGERS LOADING COMPLETE ===');
+        console.log('=== CHARGERS LOADING COMPLETE ===');
     } catch (err) {
-        console.error('❌ Error loading chargers:', err.message);
+        console.error('Error loading chargers:', err.message);
         console.error('   Stack:', err.stack);
         chargers = [];
         // Still render UI even if loading fails
@@ -198,28 +198,28 @@ async function loadChargers() {
 
 // Render chargers on map
 function renderChargersOnMap() {
-    console.log('🗺️ === RENDER CHARGERS ON MAP ===');
-    
+    console.log('=== RENDER CHARGERS ON MAP ===');
+
     if (!map) {
-        console.error('   ❌ CRITICAL: map is not initialized!');
-        console.error('   - map =', map);
+        console.error('CRITICAL: map is not initialized!');
+        console.error(' - map =', map);
         return false;
     }
-    console.log('   ✅ Map object exists');
-    
+    console.log('   Map object exists');
+
     console.log(`   - ${chargers.length} chargers to render`);
-    
+
     // Clear existing markers
     console.log('   - Removing old markers...');
     markers.forEach(m => {
         try {
             map.removeLayer(m);
         } catch (e) {
-            console.warn('   ⚠️ Problem removing marker:', e.message);
+            console.warn('   Problem removing marker:', e.message);
         }
     });
     markers = [];
-    console.log('   ✅ Old markers cleared');
+    console.log('   Old markers cleared');
 
     // Add new markers
     console.log('   - Adding new markers...');
@@ -240,13 +240,13 @@ function renderChargersOnMap() {
                 });
             
             markers.push(marker);
-            console.log(`      ✅ [${idx+1}] Added ${charger.name} @ ${charger.latitude}, ${charger.longitude}`);
+            console.log(`      [${idx+1}] Added ${charger.name} @ ${charger.latitude}, ${charger.longitude}`);
         } catch (e) {
-            console.error(`      ❌ Error adding marker for ${charger.name}:`, e.message);
+            console.error(`      Error adding marker for ${charger.name}:`, e.message);
         }
     });
 
-    console.log(`   ✅ ${markers.length} markers added to map`);
+    console.log(`   ${markers.length} markers added to map`);
 
     // Fit bounds to show all markers
     if (markers.length > 0) {
@@ -254,22 +254,22 @@ function renderChargersOnMap() {
             console.log('   - Calculating bounds for all markers...');
             const group = new L.featureGroup(markers);
             const bounds = group.getBounds();
-            console.log(`   ✅ Bounds calculated - fitting map..`);
+            console.log('   Bounds calculated - fitting map');
             map.fitBounds(bounds.pad(0.1), { maxZoom: 15 });
-            console.log('   ✅ Map fitted to bounds');
+            console.log('   Map fitted to bounds');
         } catch (e) {
-            console.warn('   ⚠️ Error fitting bounds:', e.message);
+            console.warn('   Error fitting bounds:', e.message);
             // Fallback: center on London
             map.setView([51.505, -0.09], 13);
         }
     } else {
-        console.warn('   ⚠️ No chargers to display - centering on London');
+        console.warn('   No chargers to display - centering on London');
         if (map) {
             map.setView([51.505, -0.09], 13);
         }
     }
     
-    console.log('✅ === RENDER COMPLETE ===');
+    console.log('=== RENDER COMPLETE ===');
     return true;
 }
 
@@ -282,9 +282,9 @@ function createMarkerPopup(charger, status) {
     }[status];
 
     const statusLabel = {
-        'available': '✅ Available',
-        'limited': '⚠️ Limited',
-        'busy': '❌ Busy'
+        'available': 'Available',
+        'limited': 'Limited',
+        'busy': 'Busy'
     }[status];
 
     const user = Auth.getCurrentUser();
@@ -293,14 +293,14 @@ function createMarkerPopup(charger, status) {
     let bookingButton = '';
     if (isUser && charger.availableSlots > 0) {
         bookingButton = `
-            <button class="btn btn-sm btn-success w-100 mt-2" 
+                <button class="btn btn-sm btn-success w-100 mt-2" 
                     onclick="selectAndShowBooking('${charger._id}')"
                     style="font-size: 0.85rem;">
-                📅 Book Slot
+                Book Slot
             </button>
         `;
     } else if (isUser && charger.availableSlots === 0) {
-        bookingButton = `<p class="alert alert-danger mb-0 mt-2 p-2">❌ No available slots</p>`;
+        bookingButton = `<p class="alert alert-danger mb-0 mt-2 p-2">No available slots</p>`;
     }
 
     return `
@@ -312,10 +312,10 @@ function createMarkerPopup(charger, status) {
                 </div>
                 
                 <div style="border-top: 1px solid #e9ecef; padding-top: 8px;">
-                    ${charger.address ? `<div style="margin-bottom: 6px;"><small style="color: #666;">📍 ${escapeHtml(charger.address)}</small></div>` : ''}
-                    <div style="margin-bottom: 6px;"><small style="color: #666;">⚡ ${charger.chargerType}</small></div>
+                    ${charger.address ? `<div style="margin-bottom: 6px;"><small style="color: #666;">${escapeHtml(charger.address)}</small></div>` : ''}
+                    <div style="margin-bottom: 6px;"><small style="color: #666;">${charger.chargerType}</small></div>
                     <div style="margin-bottom: 8px;"><small style="color: #666;">Slots: <strong>${charger.availableSlots}</strong> / ${charger.totalSlots}</small></div>
-                    ${charger.rating ? `<div style="margin-bottom: 8px;"><small style="color: #666;">⭐ ${charger.rating.toFixed(1)} / 5.0</small></div>` : ''}
+                    ${charger.rating ? `<div style="margin-bottom: 8px;"><small style="color: #666;">${charger.rating.toFixed(1)} / 5.0</small></div>` : ''}
                     ${charger.description ? `<div style="margin-bottom: 8px; color: #666;"><small>${escapeHtml(charger.description)}</small></div>` : ''}
                 </div>
                 
@@ -347,9 +347,9 @@ function renderChargersList() {
         }[status];
         
         const statusText = {
-            'available': '✅ Available',
-            'limited': '⚠️ Limited',
-            'busy': '❌ Busy'
+            'available': 'Available',
+            'limited': 'Limited',
+            'busy': 'Busy'
         }[status];
         
         html += `
@@ -357,8 +357,8 @@ function renderChargersList() {
                  onclick="showChargerDetail(${JSON.stringify(charger).replace(/"/g, '&quot;')})">
                 <div class="card-body p-3">
                     <h6 class="mb-1">${escapeHtml(charger.name)}</h6>
-                    <small class="text-muted d-block">📍 ${escapeHtml(charger.address || 'No address')}</small>
-                    <small class="text-muted d-block">⚡ ${charger.chargerType}</small>
+                    <small class="text-muted d-block">${escapeHtml(charger.address || 'No address')}</small>
+                    <small class="text-muted d-block">${charger.chargerType}</small>
                     <div class="mt-2 d-flex justify-content-between">
                         <small><strong>${charger.availableSlots}/${charger.totalSlots}</strong> slots</small>
                         <span class="badge ${statusClass.replace('border-', 'bg-')}">${statusText}</span>
@@ -385,9 +385,9 @@ function showChargerDetail(charger) {
     }[status];
 
     const statusLabel = {
-        'available': '✅ Available',
-        'limited': '⚠️ Limited',
-        'busy': '❌ Busy'
+        'available': 'Available',
+        'limited': 'Limited',
+        'busy': 'Busy'
     }[status];
 
     let html = `
@@ -405,8 +405,8 @@ function showChargerDetail(charger) {
             <span class="badge ${statusBadgeClass}">${statusLabel}</span>
         </div>
         <hr>
-        <p><strong>📍 Address:</strong> ${escapeHtml(charger.address || 'N/A')}</p>
-        <p><strong>⭐ Rating:</strong> ${charger.rating ? charger.rating.toFixed(1) : 'N/A'} / 5.0</p>
+        <p><strong>Address:</strong> ${escapeHtml(charger.address || 'N/A')}</p>
+        <p><strong>Rating:</strong> ${charger.rating ? charger.rating.toFixed(1) : 'N/A'} / 5.0</p>
         ${charger.description ? `<p><strong>Description:</strong> ${escapeHtml(charger.description)}</p>` : ''}
     `;
 
@@ -414,7 +414,7 @@ function showChargerDetail(charger) {
     
     const bookBtn = document.getElementById('bookChargerBtn');
     bookBtn.disabled = charger.availableSlots === 0;
-    bookBtn.textContent = charger.availableSlots > 0 ? '✅ Book Now' : '❌ No Slots Available';
+    bookBtn.textContent = charger.availableSlots > 0 ? 'Book Now' : 'No Slots Available';
     bookBtn.onclick = () => handleBooking();
 
     if (chargerModal) {
@@ -447,7 +447,7 @@ async function confirmBooking(minutes) {
     if (bookDurationModal) bookDurationModal.hide();
 
     // PROTOTYPE: Show placeholder message instead of processing booking
-    alert('🚀 Booking module under development – will be demonstrated in next review.\n\nThis is a Phase 1 Architecture Demo. Full booking and approval workflow coming soon.');
+    alert('Booking module under development – will be demonstrated in next review.\n\nThis is a Phase 1 Architecture Demo. Full booking and approval workflow coming soon.');
     if (chargerModal) chargerModal.hide();
 }
 
@@ -464,7 +464,7 @@ async function loadLeaderboard() {
         html = '<p class="text-muted">No users yet</p>';
     } else {
         leaders.forEach((user, idx) => {
-            const medalIcon = idx === 0 ? '🥇' : idx === 1 ? '🥈' : idx === 2 ? '🥉' : `${idx + 1}.`;
+            const medalIcon = idx === 0 ? '1.' : idx === 1 ? '2.' : idx === 2 ? '3.' : `${idx + 1}.`;
             html += `
                 <div class="d-flex justify-content-between align-items-center mb-3 pb-2 border-bottom">
                     <div>
@@ -472,7 +472,7 @@ async function loadLeaderboard() {
                         <br>
                         <small class="text-muted">${user.totalChargingTime} hrs charged</small>
                     </div>
-                    <span class="badge bg-success">🌱 ${user.greenScore}</span>
+                    <span class="badge bg-success">${user.greenScore}</span>
                 </div>
             `;
         });
