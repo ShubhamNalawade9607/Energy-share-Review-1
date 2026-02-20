@@ -1,0 +1,41 @@
+ENERGY-SHARE PROJECT - Review
+
+Project Type: EV Charging Station Discovery & Booking Platform
+Tech Stack: HTML5, CSS3, JavaScript, Bootstrap 5, Leaflet.js
+Status: Phase 1 Prototype - UI/Architecture Demo
+
+Features Implemented:
+- Interactive map with charger locations (OpenStreetMap/Leaflet)
+- User/Owner authentication system
+- Charger discovery and detail cards
+- Green Score dashboard with environmental metrics
+- Responsive design (mobile + desktop)
+- Admin/Owner panel for station management
+- Leaderboard with top users
+
+Current State:
+- Booking system DISABLED - shows "under development" alert instead
+- Green Score uses STATIC DEMO DATA (score: 75, sessions: 12, CO2: 45.6kg)
+- All UI components visible and functional
+- Frontend only - NO backend integration
+- Prototype badge visible on all pages
+
+Folder Structure:
+public/  → Frontend files (HTML, CSS, JS)
+  ├── index.html, login.html, dashboard.html, owner.html
+  ├── css/style.css
+  └── js/ → api.js, auth.js, map.js, main.js, bookingRequest.js
+package.json → Dependencies list
+
+Development Notes:
+- Booking module disabled in map.js:confirmBooking() and bookingRequest.js:sendBookingRequest()
+- Green score hardcoded in main.js:loadImpact() and updateUserProfile()
+- All pages include prototype badge in navbar
+- Demo charger data falls back when API unavailable
+
+Next Phase:
+- Backend API integration with Node.js/Express
+- Real booking workflow implementation
+- Green score calculation engine
+- Database (MongoDB) models finalization
+- Real-time session management

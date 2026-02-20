@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map Test - Energy-Share</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css" />
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            background: #f0f0f0;
+        }
+        
+        body {
+            font-family: Arial, sans-serif;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .header {
+            background: white;
+            padding: 15px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .test-result {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #ccc;
+        }
+        
+        .test-result.success {
+            background: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+        }
+        
+        .test-result.error {
+            background: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        
+        #mapTest {
+            width: 100%;
+            height: 500px;
+            background: #e5e3df;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            margin-top: 20px;
+        }
+        
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>⚡ Energy-Share Map Test</h1>
+            <p>Testing Leaflet.js and map rendering capabilities</p>
+        </div>
+        
+        <div class="card">
+            <h2>Library Status</h2>
+            <div id="libraryStatus">Checking...</div>
+        </div>
+        
+        <div class="card">
+            <h2>Map Test</h2>
+            <p>If the map appears below with OpenStreetMap tiles and a marker in London, everything is working!</p>
+            <div id="mapTest"></div>
+        </div>
+        
+        <div class="card">
+            <h2>Test Results</h2>
+            <div id="results">Running tests...</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+    
+    <script>
+        const resultsDiv = document.getElementById('results');
+        const libraryDiv = document.getElementById('libraryStatus');
+        
+        function addResult(label, success, message) {
+            const div = document.createElement('div');
+            div.className = 'test-result ' + (success ? 'success' : 'error');
+            div.innerHTML = `<strong>${label}:</strong> ${message}`;
+            resultsDiv.appendChild(div);
+        }
+        
+        // Test 1: Check Leaflet
+        if (typeof L !== 'undefined') {
+            libraryDiv.innerHTML += '✅ Leaflet is loaded<br>';
+            addResult('Leaflet Library', true, 'Leaflet L object is available');
+        } else {
+            libraryDiv.innerHTML += '❌ Leaflet NOT loaded<br>';
+            addResult('Leaflet Library', false, 'Leaflet failed to load from CDN');
+        }
+        
+        // Test 2: Check L.map function
+        if (typeof L !== 'undefined' && typeof L.map === 'function') {
+            libraryDiv.innerHTML += '✅ L.map() function exists<br>';
+            addResult('L.map() Function', true, 'L.map function is available');
+        } else {
+            libraryDiv.innerHTML += '❌ L.map() missing<br>';
+            addResult('L.map() Function', false, 'L.map function not found');
+        }
+        
+        // Test 3: Check L.tileLayer function
+        if (typeof L !== 'undefined' && typeof L.tileLayer === 'function') {
+            libraryDiv.innerHTML += '✅ L.tileLayer() function exists<br>';
+            addResult('L.tileLayer() Function', true, 'L.tileLayer function is available');
+        } else {
+            libraryDiv.innerHTML += '❌ L.tileLayer() missing<br>';
+            addResult('L.tileLayer() Function', false, 'L.tileLayer function not found');
+        }
+        
+        // Test 4: Try to create a map
+        try {
+            const testMap = L.map('mapTest').setView([51.505, -0.09], 13);
+            libraryDiv.innerHTML += '✅ Map created successfully<br>';
+            addResult('Map Creation', true, 'Successfully created Leaflet map instance');
+            
+            // Test 5: Add tile layer
+            try {
+                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19
+                }).addTo(testMap);
+                libraryDiv.innerHTML += '✅ Tile layer added<br>';
+                addResult('Tile Layer', true, 'OpenStreetMap tiles loaded successfully');
+            } catch (e) {
+                libraryDiv.innerHTML += '❌ Tile layer error<br>';
+                addResult('Tile Layer', false, e.message);
+            }
+            
+            // Test 6: Add marker
+            try {
+                L.marker([51.505, -0.09]).addTo(testMap)
+                    .bindPopup('Test Marker<br>London Center')
+                    .openPopup();
+                libraryDiv.innerHTML += '✅ Marker added<br>';
+                addResult('Marker', true, 'Successfully added test marker');
+            } catch (e) {
+                libraryDiv.innerHTML += '❌ Marker error<br>';
+                addResult('Marker', false, e.message);
+            }
+            
+            // Invalidate size
+            setTimeout(() => {
+                testMap.invalidateSize();
+            }, 100);
+        } catch (e) {
+            libraryDiv.innerHTML += '❌ Map creation error<br>';
+            addResult('Map Creation', false, e.message);
+        }
+        
+        // Test DOM
+        const mapEl = document.getElementById('mapTest');
+        if (mapEl) {
+            libraryDiv.innerHTML += '✅ Map DOM element found<br>';
+            addResult('Map Container', true, `Found #mapTest element (${mapEl.offsetWidth}x${mapEl.offsetHeight}px)`);
+        } else {
+            libraryDiv.innerHTML += '❌ Map DOM missing<br>';
+            addResult('Map Container', false, '#mapTest element not found in DOM');
+        }
+    </script>
+</body>
+</html>

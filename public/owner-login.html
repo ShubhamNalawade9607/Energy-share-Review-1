@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Owner Login - EV Charging Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">⚡ EV Charging Hub</a>
+            <span class="badge bg-info">Prototype – Phase 1 Architecture Demo</span>
+        </div>
+    </nav>
+
+    <div class="container d-flex justify-content-center align-items-center min-vh-100">
+        <div class="card shadow-lg" style="width: 100%; max-width: 420px;">
+            <div class="card-header bg-primary text-white text-center py-4">
+                <h4 class="mb-0">🏢 Charger Owner Portal</h4>
+            </div>
+            <div class="card-body p-4">
+                <!-- Nav Tabs -->
+                <ul class="nav nav-tabs mb-4" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active" id="loginTab" data-bs-toggle="tab" data-bs-target="#login">
+                            Login
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="registerTab" data-bs-toggle="tab" data-bs-target="#register">
+                            Register
+                        </button>
+                    </li>
+                </ul>
+
+                <!-- Tab Content -->
+                <div class="tab-content">
+                    <!-- Login Form -->
+                    <div class="tab-pane fade show active" id="login">
+                        <form id="ownerLoginForm">
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="ownerLoginEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" id="ownerLoginPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Login</button>
+                        </form>
+                    </div>
+
+                    <!-- Register Form -->
+                    <div class="tab-pane fade" id="register">
+                        <form id="ownerRegisterForm">
+                            <div class="mb-3">
+                                <label class="form-label">Business Name</label>
+                                <input type="text" class="form-control" id="ownerRegisterName" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Email Address</label>
+                                <input type="email" class="form-control" id="ownerRegisterEmail" required>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">Password</label>
+                                <input type="password" class="form-control" id="ownerRegisterPassword" required>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100">Register Business</button>
+                        </form>
+                    </div>
+                </div>
+
+                <hr class="my-4">
+                <p class="text-center text-muted">
+                    Looking to charge your EV? <a href="/public/login.html">User login</a>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script>
+        document.getElementById('ownerLoginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('ownerLoginEmail').value;
+            const password = document.getElementById('ownerLoginPassword').value;
+            await Auth.login(email, password, 'owner');
+        });
+
+        document.getElementById('ownerRegisterForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('ownerRegisterName').value;
+            const email = document.getElementById('ownerRegisterEmail').value;
+            const password = document.getElementById('ownerRegisterPassword').value;
+            await Auth.register(name, email, password, 'owner');
+        });
+    </script>
+</body>
+</html>

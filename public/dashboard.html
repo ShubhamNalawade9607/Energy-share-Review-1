@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - EV Charging Hub</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.css" />
+    <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="/">⚡ EV Charging Hub</a>
+            <span class="badge bg-info me-3">Prototype – Phase 1 Architecture Demo</span>
+            <div class="d-flex ms-auto gap-3 align-items-center">
+                <span class="text-light fw-bold" id="userScore">🌱 Score: 0</span>
+                <div class="dropdown">
+                    <button class="btn btn-outline-light dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                        <span id="userName">User</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="#" id="viewBookings">📅 My Bookings</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" id="logoutBtn">Logout</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid py-4">
+        <div class="row g-4">
+            <!-- Map Section -->
+            <div class="col-lg-8">
+                <div class="card shadow-sm h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">🗺️ Find Charging Stations</h5>
+                    </div>
+                    <div class="card-body p-0" style="height: 600px; display: flex; flex-direction: column; overflow: hidden;">
+                        <div id="map" style="width: 100%; height: 100%; display: block; flex: 1; position: relative; background-color: #e5e3df;"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div class="col-lg-4">
+                <!-- Chargers List -->
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="mb-0">📍 Nearby Chargers</h5>
+                    </div>
+                    <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                        <div id="chargersList">
+                            <p class="text-muted">Loading chargers...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Green Score Card -->
+                <div class="card shadow-sm mb-4" id="greenCardWrapper">
+                    <div class="card-header bg-success text-white">
+                        <h6 class="mb-0">🌱 Your Green Impact</h6>
+                    </div>
+                    <div class="card-body">
+                        <div id="greenCard">
+                            <div class="mb-2">
+                                <div class="d-flex justify-content-between">
+                                    <div><strong id="greenScoreValue">🌱 0</strong></div>
+                                    <div><small id="greenScorePercent">0%</small></div>
+                                </div>
+                                <div class="progress mt-2" style="height: 12px;">
+                                    <div id="greenProgress" class="progress-bar bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                                <!-- Recent Sessions -->
+                                <div class="card shadow-sm mb-4">
+                                    <div class="card-header bg-primary text-white">
+                                        <h6 class="mb-0">🔋 Recent Sessions</h6>
+                                    </div>
+                                    <div class="card-body" style="max-height: 220px; overflow-y: auto;">
+                                        <div id="recentSessions">
+                                            <p class="text-muted">Loading recent sessions...</p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Accepted Booking Requests -->
+                                <div class="card shadow-sm mb-4">
+                                    <div class="card-header bg-secondary text-white">
+                                        <h6 class="mb-0">📨 Accepted Requests</h6>
+                                    </div>
+                                    <div class="card-body" style="max-height: 220px; overflow-y: auto;">
+                                        <div id="acceptedRequests">
+                                            <p class="text-muted">Loading accepted requests...</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            <div class="mt-3 small text-muted">
+                                <div>Total sessions: <strong id="totalSessions">0</strong></div>
+                                <div>Estimated CO₂ saved: <strong id="co2Saved">0 kg</strong></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Leaderboard -->
+                <div class="card shadow-sm">
+                    <div class="card-header bg-warning">
+                        <h5 class="mb-0">🏆 Top Users (Green Score)</h5>
+                    </div>
+                    <div class="card-body" style="max-height: 300px; overflow-y: auto;">
+                        <div id="leaderboard">
+                            <p class="text-muted">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charger Detail Modal -->
+    <div class="modal fade" id="chargerModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="chargerModalTitle">Charger Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="chargerModalBody"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="bookChargerBtn">Book Now</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Bookings Modal -->
+    <div class="modal fade" id="bookingsModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">📅 My Bookings</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs mb-3" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="bookings-tab" data-bs-toggle="tab" data-bs-target="#bookings-content" type="button" role="tab">Active Bookings</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="requests-tab" data-bs-toggle="tab" data-bs-target="#requests-content" type="button" role="tab">Booking Requests</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div class="tab-pane fade show active" id="bookings-content" role="tabpanel">
+                            <p class="text-muted">Loading bookings...</p>
+                        </div>
+                        <div class="tab-pane fade" id="requests-content" role="tabpanel">
+                            <p class="text-muted">Loading booking requests...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Book Duration Modal -->
+    <div class="modal fade" id="bookDurationModal" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">⏱️ Select Charging Duration</h5>
+                </div>
+                <div class="modal-body">
+                    <p class="text-center mb-4">How long would you like to charge?</p>
+                    <div class="d-grid gap-3">
+                        <button type="button" class="btn btn-lg btn-outline-primary py-3" onclick="confirmBooking(30)">
+                            <strong>30 Minutes</strong>
+                            <small class="d-block text-muted">Quick charge</small>
+                        </button>
+                        <button type="button" class="btn btn-lg btn-outline-primary py-3" onclick="confirmBooking(60)">
+                            <strong>60 Minutes</strong>
+                            <small class="d-block text-muted">Standard charge</small>
+                        </button>
+                        <button type="button" class="btn btn-lg btn-outline-primary py-3" onclick="confirmBooking(90)">
+                            <strong>90 Minutes</strong>
+                            <small class="d-block text-muted">Full charge</small>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/leaflet@1.9.4/dist/leaflet.min.js"></script>
+    
+    <!-- Inline map initialization test -->
+    <script>
+        // ============ INLINE MAP INITIALIZATION ============
+        console.log('%c=== MAP INITIALIZATION START ===', 'color: #2ecc71; font-weight: bold;');
+        
+        // Immediate check
+        (function initMapEarly() {
+            console.log('1️⃣ Checking Leaflet...');
+            if (typeof L === 'undefined') {
+                console.error('❌ Leaflet not available yet');
+                return;
+            }
+            console.log('✅ Leaflet is available');
+            
+            console.log('2️⃣ Finding map container...');
+            const container = document.getElementById('map');
+            if (!container) {
+                console.error('❌ Map container not found in DOM');
+                return;
+            }
+            const w = container.clientWidth;
+            const h = container.clientHeight;
+            console.log(`✅ Container found: ${w}x${h}px`);
+            
+            // Show what's on the page
+            console.log('3️⃣ Container styles:', {
+                display: window.getComputedStyle(container).display,
+                width: window.getComputedStyle(container).width,
+                height: window.getComputedStyle(container).height,
+                position: window.getComputedStyle(container).position
+            });
+            
+            try {
+                console.log('4️⃣ Creating Leaflet map...');
+                window.earlyMap = L.map('map', {
+                    preferCanvas: false,
+                    zoomControl: true,
+                    attributionControl: true
+                });
+                console.log('✅ Map instance created');
+                
+                console.log('5️⃣ Setting view (London: 51.505, -0.09, zoom 13)...');
+                window.earlyMap.setView([51.505, -0.09], 13);
+                console.log('✅ View set');
+                
+                console.log('6️⃣ Adding tile layer...');
+                const tileUrl = 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png';
+                const tileLayer = L.tileLayer(tileUrl, {
+                    attribution: '© OpenStreetMap contributors',
+                    maxZoom: 19,
+                    minZoom: 0,
+                    crossOrigin: 'anonymous',
+                    noWrap: false
+                });
+                tileLayer.addTo(window.earlyMap);
+                console.log('✅ Tile layer added');
+                
+                console.log('7️⃣ Checking tile layer status...');
+                // Monitor tile loading
+                tileLayer.on('error', function(e) {
+                    console.error('❌ Tile loading error:', e);
+                });
+                tileLayer.on('load', function() {
+                    console.log('✅ Tiles loaded!');
+                });
+                
+                console.log('8️⃣ Triggering size updates...');
+                setTimeout(() => window.earlyMap.invalidateSize(true), 50);
+                setTimeout(() => window.earlyMap.invalidateSize(true), 150);
+                setTimeout(() => window.earlyMap.invalidateSize(true), 350);
+                
+                window.earlyMap.on('zoom', () => console.log('🔍 Zoom changed'));
+                window.earlyMap.on('moveend', () => console.log('📍 Map moved'));
+                
+                console.log('%c✅ EARLY MAP INITIALIZATION COMPLETE', 'color: #2ecc71; font-weight: bold;');
+                
+            } catch (err) {
+                console.error('%c❌ EARLY MAP FAILED:', 'color: #e74c3c; font-weight: bold;', err.message);
+                console.error('Stack:', err.stack);
+            }
+        })();
+        // ============ END INLINE MAP INITIALIZATION ============
+    </script>
+    
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+    <script src="/js/map.js"></script>
+    <script src="/js/bookingRequest.js"></script>
+    <script src="/js/main.js"></script>
+
+
+</body>
+</html>
